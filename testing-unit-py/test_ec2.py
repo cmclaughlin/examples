@@ -21,7 +21,7 @@ class TestingWithMocks(unittest.TestCase):
             self.assertIsNotNone(tags, f'server {urn} must have tags')
             self.assertIn('Name', tags, 'server {urn} must have a name tag')
 
-        return pulumi.Output.all(infra.server.urn, infra.server.tags).apply(check_tags)
+        return pulumi.Output.all(infra.main().server.urn, infra.main().server.tags).apply(check_tags)
 
     # Test if the instance is configured with user_data.
     @pulumi.runtime.test
@@ -30,7 +30,7 @@ class TestingWithMocks(unittest.TestCase):
             urn, user_data = args
             self.assertFalse(user_data, f'illegal use of user_data on server {urn}')
 
-        return pulumi.Output.all(infra.server.urn, infra.server.user_data).apply(check_user_data)
+        return pulumi.Output.all(infra.main().server.urn, infra.main().server.user_data).apply(check_user_data)
 
     # Test if port 22 for ssh is exposed.
     @pulumi.runtime.test
@@ -41,4 +41,4 @@ class TestingWithMocks(unittest.TestCase):
             self.assertFalse(ssh_open, f'security group {urn} exposes port 22 to the Internet (CIDR 0.0.0.0/0)')
 
         # Return the results of the unit tests.
-        return pulumi.Output.all(infra.group.urn, infra.group.ingress).apply(check_security_group_rules)
+        return pulumi.Output.all(infra.main().group.urn, infra.main().group.ingress).apply(check_security_group_rules)
